@@ -51,7 +51,7 @@
                 <q-td key="nome_pessoa" :props="props">
                   <q-input
                     v-model="props.row.nome_pessoa"
-                    borderless
+                    outlined
                     @update:model-value="validaPessoa(props.row)"
                   />
                 </q-td>
@@ -61,7 +61,7 @@
                   <q-select
                     v-model="props.row.cargo_id"
                     :options="cargos"
-                    borderless
+                    outlined
                     emit-value
                     map-options
                     option-value="id"
