@@ -98,6 +98,13 @@
           </q-table>
         </q-card-section>
 
+        <q-card-section>
+          <q-checkbox
+            v-model="agreeWithTerms"
+            label="Os dados deste formulário serão utilizados somente para o efeito de registo na sessão de esclarecimento"
+          />
+        </q-card-section>
+
         <q-card-actions align="right">
           <q-btn
             color="primary"
@@ -112,6 +119,7 @@
             color="primary"
             label="Submeter"
             :loading="saving"
+            :disable="!agreeWithTerms"
             @click="guardaFormulario"
             class="full-width"
             v-if="pessoas.length > 0"
@@ -151,6 +159,7 @@ export default defineComponent({
 
     const inputClubs = ref(null);
     const saving = ref(false);
+    const agreeWithTerms = ref(false);
 
     const clubes = ref([]);
     const clube = ref(null);
@@ -320,6 +329,7 @@ export default defineComponent({
     return {
       inputClubs,
       saving,
+      agreeWithTerms,
       clubes,
       cargos,
       pessoas,
