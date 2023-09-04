@@ -2,7 +2,9 @@
   <q-layout view="lHh Lpr lFf">
     <q-header>
       <q-toolbar>
-        <q-toolbar-title> Formulário de inscrição </q-toolbar-title>
+        <q-toolbar-title>
+          INSCRIÇÃO NA SESSÃO DE ESCLARECIMENTO NOVAS REGRAS 2023/2024
+        </q-toolbar-title>
       </q-toolbar>
     </q-header>
 
@@ -11,6 +13,26 @@
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped>
+@media (max-width: 750px) {
+  .q-toolbar__title {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .q-toolbar__title {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 440px) {
+  .q-toolbar__title {
+    font-size: 10px;
+  }
+}
+</style>
 
 <script>
 import { defineComponent } from "vue";

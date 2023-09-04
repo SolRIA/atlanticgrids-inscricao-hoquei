@@ -41,13 +41,10 @@
             no-data-label="Sem dados"
             row-key="id"
             hide-bottom
+            v-model:pagination="pagination"
             :rows="pessoas"
             :columns="columns"
           >
-            <template v-slot:top-right>
-              <q-btn color="primary" dense icon="add" @click="adicionaPessoa" />
-            </template>
-
             <template #body="props">
               <q-tr :props="props">
                 <!-- nome pessoa -->
@@ -55,7 +52,7 @@
                   <q-input
                     v-model="props.row.nome_pessoa"
                     borderless
-                    @update:model-value="validaPessoas"
+                    @update:model-value="validaPessoa(props.row)"
                   />
                 </q-td>
 
@@ -69,7 +66,7 @@
                     map-options
                     option-value="id"
                     option-label="nome"
-                    @update:model-value="validaPessoas"
+                    @update:model-value="validaPessoa(props.row)"
                   />
                 </q-td>
 
@@ -104,28 +101,24 @@
         <q-card-actions align="right">
           <q-btn
             color="primary"
-            label="Guardar"
+            icon="add"
+            label="Adicionar Participante"
+            @click="adicionaPessoa"
+          />
+        </q-card-actions>
+
+        <q-card-actions>
+          <q-btn
+            color="primary"
+            label="Submeter"
             :loading="saving"
             @click="guardaFormulario"
+            class="full-width"
             v-if="pessoas.length > 0"
           />
         </q-card-actions>
       </q-card>
     </div>
-
-    <q-dialog v-model="showSavedConfirmation">
-      <q-card class="q-pa-xl">
-        <q-card-section class="text-center">
-          <q-icon name="task_alt" color="positive" size="8em" />
-        </q-card-section>
-        <q-card-section>
-          <div class="text-h6">Os dados foram guardados com sucesso</div>
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn v-close-popup color="primary" label="Fechar" size="lg" />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
   </q-page>
 </template>
 
@@ -147,16 +140,17 @@
 <script>
 import { defineComponent, onMounted, ref, watch } from "vue";
 import { useQuasar } from "quasar";
+import { useRouter } from "vue-router";
 import useApi from "src/composables/UseApi";
 
 export default defineComponent({
   name: "mainPage",
   setup() {
     const $q = useQuasar();
+    const $router = useRouter();
 
     const inputClubs = ref(null);
     const saving = ref(false);
-    const showSavedConfirmation = ref(false);
 
     const clubes = ref([]);
     const clube = ref(null);
@@ -168,9 +162,9 @@ export default defineComponent({
     const { listarClubes, listarCargos, guardarPessoas } = useApi();
 
     watch(clube, (_current, _previus) => {
-      pessoas.value.forEach((pessoa) => {
-        pessoa.clube_id = clube.value.id;
-      });
+      if (pessoas.value.length === 0) {
+        adicionaPessoaSemValidacao(5);
+      }
     });
 
     const initData = async () => {
@@ -183,14 +177,20 @@ export default defineComponent({
     };
 
     const adicionaPessoa = () => {
-      if (inputClubs.value.validate() === false) return;
+      if (validaClube() === false) return;
 
-      pessoas.value.push({
-        nome_pessoa: "",
-        cargo_id: null,
-        clube_id: clube.value.id,
-        erro: null,
-      });
+      adicionaPessoaSemValidacao(1);
+    };
+
+    const adicionaPessoaSemValidacao = (numPessoas) => {
+      for (let i = 0; i < numPessoas; i++) {
+        pessoas.value.push({
+          nome_pessoa: "",
+          cargo_id: null,
+          clube_id: clube.value?.id,
+          erro: null,
+        });
+      }
     };
 
     const removePessoa = (pessoa) => {
@@ -212,20 +212,14 @@ export default defineComponent({
 
       return false;
     };
+
+    const validaClube = () => {
+      return inputClubs.value.validate();
+    };
+
     const validaPessoas = () => {
       pessoas.value.forEach((pessoa) => {
-        // reset dos erros
-        pessoa.erro = null;
-
-        // valida o cargo da pessoa
-        if (pessoa.cargo_id === null) {
-          pessoa.erro = "O cargo não está definido";
-        }
-
-        // valida o nome da pessoa
-        if (isNullOrWhiteSpace(pessoa.nome_pessoa)) {
-          pessoa.erro = "O nome está vazio";
-        }
+        validaPessoa(pessoa);
       });
 
       const registosInvalidos = pessoas.value.find(
@@ -235,11 +229,43 @@ export default defineComponent({
       return registosInvalidos === undefined;
     };
 
-    const guardaFormulario = () => {
-      // validar os registos
-      const valid = validaPessoas();
+    const validaPessoa = (pessoa) => {
+      // reset dos erros
+      pessoa.erro = null;
 
-      if (valid === false) {
+      // valida o cargo da pessoa
+      if (pessoa.cargo_id === null) {
+        pessoa.erro = "O cargo não está definido";
+      }
+
+      // valida o nome da pessoa
+      if (isNullOrWhiteSpace(pessoa.nome_pessoa)) {
+        pessoa.erro = "O nome está vazio";
+      }
+    };
+
+    const removePessoasSemValores = () => {
+      pessoas.value = pessoas.value.filter(
+        (p) => isNullOrWhiteSpace(p.nome_pessoa) === false || p.cargo_id > 0
+      );
+    };
+
+    const guardaFormulario = () => {
+      // valida o clube
+      if (validaClube() === false) {
+        // não foi escolhido um clube vamos alertar o utilizador
+        $q.dialog({
+          title: "Atenção",
+          message: "Deve escolher um clube",
+        });
+        return;
+      }
+
+      //remove pessoas em que não foi registado nenhum valor
+      removePessoasSemValores();
+
+      // validar os registos
+      if (validaPessoas() === false) {
         // existem registos não válidos, vamos alertar o utilizador
         $q.dialog({
           title: "Atenção",
@@ -257,22 +283,26 @@ export default defineComponent({
         persistent: true,
       }).onOk(async () => {
         const pessoasGuardar = pessoas.value
-          .filter((p) => p.erro === null)
+          .filter(
+            (p) =>
+              p.erro === null &&
+              isNullOrWhiteSpace(p.nome_pessoa) === false &&
+              p.cargo_id > 0
+          )
           .map((p) => ({
             nome_pessoa: p.nome_pessoa,
             cargo_id: p.cargo_id,
-            clube_id: p.clube_id,
+            clube_id: clube.value.id,
           }));
 
         try {
           saving.value = true;
           // guardar o formulário
           await guardarPessoas(pessoasGuardar);
-
           // limpar o formulário
           pessoas.value = [];
           // mostrar ao utilizador que a operação foi bem sucedida
-          showSavedConfirmation.value = true;
+          $router.push({ path: "/FormularioSubmetido" });
         } catch (error) {
           $q.dialog({
             title: "Erro",
@@ -290,11 +320,13 @@ export default defineComponent({
     return {
       inputClubs,
       saving,
-      showSavedConfirmation,
       clubes,
       cargos,
       pessoas,
       clube,
+      pagination: {
+        rowsNumber: 0,
+      },
       columns: [
         {
           name: "nome_pessoa",
@@ -314,6 +346,7 @@ export default defineComponent({
       ],
       isNullOrWhiteSpace,
       validaPessoas,
+      validaPessoa,
       adicionaPessoa,
       removePessoa,
       guardaFormulario,
