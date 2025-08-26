@@ -1,0 +1,8 @@
+// This is an example of request
+// You can change DRAFT template in settings: Settings > Drafts > Request Draft Template
+
+// request example
+GET https://lssyshibpnjllrurzyxc.supabase.co/rest/v1/clubes?select=id,nome
+
+// custom headers example
+@ApiKey: sb_publishable_yKbljylv0Vl61VZfaSnhXg_aBXZ2ROh

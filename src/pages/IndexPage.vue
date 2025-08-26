@@ -15,8 +15,17 @@
         </q-card-section>
 
         <q-card-section>
-          <q-table class="q-mt-sm" color="positive" title="Participantes" no-data-label="Sem dados" row-key="id"
-                   hide-bottom v-model:pagination="pagination" :rows="pessoas" :columns="columns">
+          <q-table flat bordered class="q-mt-sm" color="positive" title="Participantes" no-data-label="Sem dados"
+                   row-key="id" hide-bottom v-model:pagination="pagination" :rows="pessoas" :columns="columns">
+
+            <template v-slot:top>
+              <div class="text-subtitle1">Participantes</div>
+              <q-space />
+              <q-btn color="primary" icon="add" label="Adicionar Participante" padding="sm lg"
+                     @click="adicionaPessoa" />
+
+            </template>
+
             <template #body="props">
               <q-tr :props="props">
                 <!-- nome pessoa -->
@@ -52,10 +61,6 @@
           <q-checkbox v-model="agreeWithTerms"
                       label="Os dados deste formulário serão utilizados somente para o efeito de registo na sessão de esclarecimento" />
         </q-card-section>
-
-        <q-card-actions align="right">
-          <q-btn color="primary" icon="add" label="Adicionar Participante" @click="adicionaPessoa" />
-        </q-card-actions>
 
         <q-card-actions>
           <q-btn color="primary" label="Submeter" :loading="saving" :disable="!agreeWithTerms" @click="guardaFormulario"

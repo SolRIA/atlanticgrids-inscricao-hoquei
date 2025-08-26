@@ -57,7 +57,7 @@ export default defineConfig(function (/* ctx */) {
       env: {
         SUPABASE_URL: "https://lssyshibpnjllrurzyxc.supabase.co",
         SUPABASE_KEY:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lzaGlicG5qbGxydXJ6eXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMzA5MTQsImV4cCI6MjA3MTcwNjkxNH0.CItGmeMRWKrUxxSwp-lCID75NGgjphmQ4YwjK-TzvBg",
+          "sb_publishable_yKbljylv0Vl61VZfaSnhXg_aBXZ2ROh",
       },
       // vueRouterBase,
       // vueDevtools,
