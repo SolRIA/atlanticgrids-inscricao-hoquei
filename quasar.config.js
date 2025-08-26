@@ -8,9 +8,9 @@
 // Configuration for your app
 // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js
 
-const { configure } = require("quasar/wrappers");
+import { defineConfig } from '#q-app/wrappers'
 
-module.exports = configure(function (/* ctx */) {
+export default defineConfig(function (/* ctx */) {
   return {
     eslint: {
       // fix: true,
@@ -55,9 +55,9 @@ module.exports = configure(function (/* ctx */) {
 
       vueRouterMode: "history", // available values: 'hash', 'history'
       env: {
-        SUPABASE_URL: "https://btczjswpaozjazqtrsve.supabase.co",
+        SUPABASE_URL: "https://lssyshibpnjllrurzyxc.supabase.co",
         SUPABASE_KEY:
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ0Y3pqc3dwYW96amF6cXRyc3ZlIiwicm9sZSI6ImFub24iLCJpYXQiOjE2OTM2NjUxNTksImV4cCI6MjAwOTI0MTE1OX0.yAzO2CLyZ0xwBojWI4mq9VulvdMF3gfGp5jtx1T55_0",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxzc3lzaGlicG5qbGxydXJ6eXhjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTYxMzA5MTQsImV4cCI6MjA3MTcwNjkxNH0.CItGmeMRWKrUxxSwp-lCID75NGgjphmQ4YwjK-TzvBg",
       },
       // vueRouterBase,
       // vueDevtools,
@@ -201,5 +201,5 @@ module.exports = configure(function (/* ctx */) {
       // extendBexScriptsConf (esbuildConf) {}
       // extendBexManifestJson (json) {}
     },
-  };
-});
+  }
+})

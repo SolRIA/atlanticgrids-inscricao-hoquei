@@ -3,7 +3,7 @@
     <q-header>
       <q-toolbar>
         <q-toolbar-title>
-          INSCRIÇÃO NA SESSÃO DE ESCLARECIMENTO NOVAS REGRAS 2023/2024
+          INSCRIÇÃO NA SESSÃO DE ESCLARECIMENTO NOVAS REGRAS 2024/2025
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
@@ -35,9 +35,9 @@
 </style>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent } from "vue"
 
 export default defineComponent({
   name: "MainLayout",
-});
+})
 </script>
