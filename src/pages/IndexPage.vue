@@ -8,6 +8,10 @@
     <div class="row justify-center">
       <q-card class="formulario">
         <q-card-section>
+          <div>Escolha a data</div>
+          <q-option-group v-model="data" :options="datas" color="primary" />
+        </q-card-section>
+        <q-card-section>
           <div class="row">
             <q-select v-model="clube" :options="clubes" option-value="id" option-label="nome" ref="inputClubs"
                       label="Clube" outlined class="col-12" :rules="[(val) => val !== null || 'Escolha um clube']" />
@@ -99,6 +103,19 @@ const $router = useRouter()
 const inputClubs = ref(null)
 const saving = ref(false)
 const agreeWithTerms = ref(false)
+
+const data = ref('12/9')
+
+const datas = [
+  {
+    label: '12 de Setembro',
+    value: '12/9'
+  },
+  {
+    label: '15 de Setembro',
+    value: '15/9'
+  }
+]
 
 const clubes = ref([])
 const clube = ref(null)
@@ -262,6 +279,7 @@ const guardaFormulario = () => {
         nome_pessoa: p.nome_pessoa,
         cargo_id: p.cargo_id,
         clube_id: clube.value.id,
+        data: data.value
       }))
 
     try {

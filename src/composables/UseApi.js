@@ -18,7 +18,7 @@ export default function useApi() {
     const { data, error } = await supabase
       .from("cargos")
       .select("id, nome")
-      .order("nome")
+      .order("ordem")
 
     if (error) throw error
 
