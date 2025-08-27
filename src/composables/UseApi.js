@@ -26,11 +26,22 @@ export default function useApi() {
   }
 
   const guardarPessoas = async (pessoas) => {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("inscritos")
       .insert(pessoas)
+      .select(`
+        data,nome_pessoa,
+        cargos (
+          nome
+        ),
+        clubes(
+          nome
+        )
+        `)
 
     if (error) throw error
+
+    return data
   }
 
   return {

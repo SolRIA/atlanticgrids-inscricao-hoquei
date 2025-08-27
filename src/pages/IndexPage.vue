@@ -11,14 +11,14 @@
           <div>Escolha a data</div>
           <q-option-group v-model="data" :options="datas" color="primary" />
         </q-card-section>
-        <q-card-section>
+        <q-card-section v-if="data">
           <div class="row">
             <q-select v-model="clube" :options="clubes" option-value="id" option-label="nome" ref="inputClubs"
                       label="Clube" outlined class="col-12" :rules="[(val) => val !== null || 'Escolha um clube']" />
           </div>
         </q-card-section>
 
-        <q-card-section>
+        <q-card-section v-if="clube">
           <q-table flat bordered class="q-mt-sm" color="positive" title="Participantes" no-data-label="Sem dados"
                    row-key="id" hide-bottom v-model:pagination="pagination" :rows="pessoas" :columns="columns">
 
@@ -61,7 +61,7 @@
           </q-table>
         </q-card-section>
 
-        <q-card-section>
+        <q-card-section v-if="clube">
           <q-checkbox v-model="agreeWithTerms"
                       label="Os dados deste formulário serão utilizados somente para o efeito de registo na sessão de esclarecimento" />
         </q-card-section>
@@ -104,7 +104,7 @@ const inputClubs = ref(null)
 const saving = ref(false)
 const agreeWithTerms = ref(false)
 
-const data = ref('12/9')
+const data = ref(null)
 
 const datas = [
   {
@@ -199,6 +199,10 @@ const isNullOrWhiteSpace = (stringToCheck) => {
   return false
 }
 
+const validaData = () => {
+  return isNullOrWhiteSpace(data.value) === false
+}
+
 const validaClube = () => {
   return inputClubs.value.validate()
 }
@@ -237,6 +241,16 @@ const removePessoasSemValores = () => {
 }
 
 const guardaFormulario = () => {
+  // valida a data
+  if (validaData() === false) {
+    // não foi escolhido uma data vamos alertar o utilizador
+    $q.dialog({
+      title: "Atenção",
+      message: "Deve escolher uma data",
+    })
+    return
+  }
+
   // valida o clube
   if (validaClube() === false) {
     // não foi escolhido um clube vamos alertar o utilizador
@@ -285,7 +299,8 @@ const guardaFormulario = () => {
     try {
       saving.value = true
       // guardar o formulário
-      await guardarPessoas(pessoasGuardar)
+      const data = await guardarPessoas(pessoasGuardar)
+      localStorage.setItem('data', JSON.stringify(data))
       // limpar o formulário
       pessoas.value = []
       // mostrar ao utilizador que a operação foi bem sucedida
